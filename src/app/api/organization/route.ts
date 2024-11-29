@@ -49,6 +49,8 @@ export async function POST(req: Request) {
   }
 }
 
+
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -56,18 +58,26 @@ export async function GET(req: Request) {
     const district = searchParams.get("district");
     const name = searchParams.get("name");
 
-    const filters = [];
-    if (name) filters.push({ name });
-    if (district) filters.push({ zones: { has: district } });
-    if (location) filters.push({ branches: { has: location } });
+    // Construct the filters for the Prisma query
+    const filters: any = {};
+    if (name) filters.name = name;
+    if (district) filters.zones = { has: district };
+    if (location) filters.branches = { has: location };
     console.log(filters);
     
+    // Query the database with the filters
     const orders = await db.organization.findMany({
     });
     console.log(orders);
+    
+
     return NextResponse.json(orders);
   } catch (error) {
-    console.log("Error coming from order route", error);
-    return new NextResponse("Internal Error", { status: 501 });
+    console.error("Error in order route:", error);
+    return NextResponse.json(
+      { message: "Internal Server Error", },
+      { status: 500 }
+    );
   }
 }
+

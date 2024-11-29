@@ -44,7 +44,6 @@ const SearchComponent = () => {
           },
         });
         console.log(response.data);
-        
 
         setResults(response.data);
       } catch (error) {
